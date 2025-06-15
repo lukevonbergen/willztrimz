@@ -60,7 +60,7 @@ export default function AdvancedNavBar() {
     <header className="w-full py-5 px-6 md:px-12 border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link href="/" className="text-xl font-bold tracking-tight text-gray-900">
-          <span className="text-indigo-600">▰▰</span> Brand
+          <span className="text-indigo-600">▰▰</span> Willz Trimz
         </Link>
 
         {/* Desktop Nav */}
