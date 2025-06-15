@@ -25,7 +25,7 @@ export default function HowToFindUs() {
         <div className="md:w-1/2 w-full h-80 md:h-96 rounded-lg overflow-hidden shadow-md">
           <iframe
             title="Our Location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19834.89609613451!2d-0.0921685!3d51.5225948!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761cb3c3b7f7e1%3A0x4e5f26c16e9e6f33!2sShoreditch%2C%20London!5e0!3m2!1sen!2suk!4v1717938593324!5m2!1sen!2suk"
+            src="https://www.google.com/maps/embed/v1/place?q=16+the+rosary+high+wycombe&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"
             width="100%"
             height="100%"
             style={{ border: 0 }}

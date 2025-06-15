@@ -11,13 +11,13 @@ export default function BannerStrip() {
     <div className="bg-yellow-400 text-black text-sm py-2 px-6 flex justify-between items-center font-medium">
       <div className="max-w-7xl mx-auto flex-1 flex justify-center md:justify-between items-center flex-wrap gap-2">
         <span>
-          🚀 Limited Offer: Get your website live in 48h – now with 10% off.
+          🚀 Limited Offer: Book a haircut before 18th June for 10% off.
         </span>
         <a
-          href="/start"
+          href="/#"
           className="underline hover:opacity-80 transition"
         >
-          Get Started
+          Book now
         </a>
       </div>
       <button
