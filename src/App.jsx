@@ -15,6 +15,7 @@ import AnalyticsDashboard from './components/Analytics/AnalyticsDashboard';
 import CheckpointPanel from './components/Checkpoints/CheckpointPanel';
 import ResourcePanel from './components/Resources/ResourcePanel';
 import CommunicationLog from './components/Communication/CommunicationLog';
+import ZoneCreationModal from './components/Map/ZoneCreationModal';
 import { useSimulation } from './hooks/useSimulation';
 import { generateGridForArea } from './utils/geoUtils';
 
@@ -38,8 +39,19 @@ const AppContent = () => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showZoneModal, setShowZoneModal] = useState(false);
+  const [pendingZoneCoordinates, setPendingZoneCoordinates] = useState(null);
 
   const { isRunning } = useSimulation();
+
+  // Listen for cancel drawing event
+  useEffect(() => {
+    const handleCancelDrawing = () => {
+      setIsDrawingMode(false);
+    };
+    window.addEventListener('cancelDrawing', handleCancelDrawing);
+    return () => window.removeEventListener('cancelDrawing', handleCancelDrawing);
+  }, []);
 
   // Regenerate grids for areas loaded from localStorage
   useEffect(() => {
@@ -135,23 +147,31 @@ const AppContent = () => {
   };
 
   const handleAreaCreated = (coordinates) => {
-    const areaName = prompt('Enter a name for this search area:', 'Search Area');
-    if (!areaName) return;
+    // Store coordinates and open modal
+    setPendingZoneCoordinates(coordinates);
+    setShowZoneModal(true);
+    setIsDrawingMode(false);
+  };
 
-    const priority = prompt('Enter priority (high/medium/low):', 'medium');
-    const timeThreshold = parseInt(prompt('Enter time threshold in minutes:', '60'));
-
+  const handleZoneModalSubmit = (zoneData) => {
     // Use deferred grid generation
     setTimeout(() => {
       addSearchAreaWithGrid({
-        name: areaName,
-        coordinates,
-        priority: ['high', 'medium', 'low'].includes(priority) ? priority : 'medium',
-        timeThreshold: timeThreshold || 60
+        name: zoneData.name,
+        coordinates: zoneData.coordinates,
+        priority: zoneData.priority,
+        timeThreshold: zoneData.timeThreshold,
+        assignedOfficers: zoneData.assignedOfficers
       });
     }, 0);
 
-    setIsDrawingMode(false);
+    setShowZoneModal(false);
+    setPendingZoneCoordinates(null);
+  };
+
+  const handleZoneModalCancel = () => {
+    setShowZoneModal(false);
+    setPendingZoneCoordinates(null);
   };
 
   const handleToggleSimulation = () => {
@@ -495,6 +515,15 @@ const AppContent = () => {
         isDangerous={true}
         onConfirm={handleResetConfirm}
         onCancel={handleResetCancel}
+      />
+
+      {/* Zone creation modal */}
+      <ZoneCreationModal
+        isOpen={showZoneModal}
+        onClose={handleZoneModalCancel}
+        onSubmit={handleZoneModalSubmit}
+        officers={officers}
+        coordinates={pendingZoneCoordinates}
       />
     </div>
   );

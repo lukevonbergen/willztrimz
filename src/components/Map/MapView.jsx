@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { useSearch } from '../../context/SearchContext';
-import AreaDrawingTool from './AreaDrawingTool';
+import PolygonDrawingTool from './PolygonDrawingTool';
 import OfficerMarkers from './OfficerMarkers';
 import CoverageLayer from './CoverageLayer';
 import SearchAreaPolygons from './SearchAreaPolygons';
@@ -59,7 +59,16 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
         <CheckpointMarkers />
 
         {/* Drawing tool (only active when in drawing mode) */}
-        {isDrawingMode && <AreaDrawingTool onAreaCreated={onAreaCreated} />}
+        {isDrawingMode && (
+          <PolygonDrawingTool
+            onComplete={onAreaCreated}
+            onCancel={() => {
+              // Notify parent to exit drawing mode
+              const event = new CustomEvent('cancelDrawing');
+              window.dispatchEvent(event);
+            }}
+          />
+        )}
 
         {/* Location search (only active when in drawing mode) */}
         {isDrawingMode && <LocationSearch />}
