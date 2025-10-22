@@ -180,6 +180,12 @@ export const SearchProvider = ({ children }) => {
 
   // Reset entire application
   const resetAll = useCallback(() => {
+    // Batch state updates to reduce re-renders
+    // Clear localStorage first
+    localStorage.removeItem('searchTrackerState');
+
+    // Use React's automatic batching (React 18+)
+    // These will be batched into a single re-render
     setSearchAreas([]);
     setOfficers([]);
     setAlerts([]);
@@ -187,7 +193,6 @@ export const SearchProvider = ({ children }) => {
     setIsPlaybackMode(false);
     setPlaybackTime(null);
     setCurrentTime(Date.now());
-    localStorage.removeItem('searchTrackerState');
   }, []);
 
   // Export data
