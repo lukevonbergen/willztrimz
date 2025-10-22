@@ -67,14 +67,14 @@ const AppContent = () => {
   const initializeDemoData = async () => {
     setIsInitializing(true);
 
-    // Create a sample search area (Central Park area in NYC)
+    // Create a sample search area (Hyde Park area in London)
     const sampleArea1 = {
       name: 'Crime Scene Area - Zone A',
       coordinates: [
-        [40.7829, -73.9654],
-        [40.7829, -73.9580],
-        [40.7689, -73.9580],
-        [40.7689, -73.9654]
+        [51.5074, -0.1778],
+        [51.5074, -0.1578],
+        [51.4974, -0.1578],
+        [51.4974, -0.1778]
       ],
       priority: 'high',
       timeThreshold: 30
@@ -83,10 +83,10 @@ const AppContent = () => {
     const sampleArea2 = {
       name: 'Secondary Search Zone',
       coordinates: [
-        [40.7689, -73.9654],
-        [40.7689, -73.9580],
-        [40.7589, -73.9580],
-        [40.7589, -73.9654]
+        [51.4974, -0.1778],
+        [51.4974, -0.1578],
+        [51.4874, -0.1578],
+        [51.4874, -0.1778]
       ],
       priority: 'medium',
       timeThreshold: 45

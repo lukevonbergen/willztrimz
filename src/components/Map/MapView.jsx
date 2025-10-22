@@ -10,9 +10,9 @@ import MapController from './MapController';
 import EvidenceMarkers from '../Evidence/EvidenceMarkers';
 import CheckpointMarkers from '../Checkpoints/CheckpointMarkers';
 
-// Default center (can be changed to any location)
-const DEFAULT_CENTER = [40.7128, -74.0060]; // New York City
-const DEFAULT_ZOOM = 15;
+// Default center - London
+const DEFAULT_CENTER = [51.5074, -0.1278]; // London, UK
+const DEFAULT_ZOOM = 13;
 
 const MapView = ({ isDrawingMode, onAreaCreated }) => {
   const { officers, isPlaybackMode, playbackTime } = useSearch();
@@ -30,11 +30,13 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
         updateWhenZooming={false}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           updateWhenIdle={true}
           updateWhenZooming={false}
           keepBuffer={2}
+          subdomains='abcd'
+          maxZoom={20}
         />
 
         {/* Map controller - handles interaction states */}
