@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { SearchProvider, useSearch } from './context/SearchContext';
 import MapView from './components/Map/MapView';
-import MainDashboard from './components/Dashboard/MainDashboard';
+import TacticalHeader from './components/Dashboard/TacticalHeader';
+import MissionControlPanel from './components/Dashboard/MissionControlPanel';
+import TacticalActivityLog from './components/Dashboard/TacticalActivityLog';
+import OfficerManagementPanel from './components/Dashboard/OfficerManagementPanel';
+import ZoneManagementPanel from './components/Dashboard/ZoneManagementPanel';
 import AlertPanel from './components/Dashboard/AlertPanel';
-import PlaybackControls from './components/Timeline/PlaybackControls';
-import TimelineSlider from './components/Timeline/TimelineSlider';
-import DeviceManager from './components/Management/DeviceManager';
-import AreaList from './components/Management/AreaList';
 import ConfirmModal from './components/ConfirmModal';
 import { useSimulation } from './hooks/useSimulation';
 import { generateGridForArea } from './utils/geoUtils';
@@ -27,10 +27,10 @@ const AppContent = () => {
 
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
-  const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, areas, devices
-  const [isInitializing, setIsInitializing] = useState(false);
+  const [activeTab, setActiveTab] = useState('mission'); // mission, zones, officers, activity
   const [isResetting, setIsResetting] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [missionStartTime] = useState(Date.now());
 
   const { isRunning } = useSimulation();
 
@@ -50,59 +50,7 @@ const AppContent = () => {
     });
   }, [searchAreas.length]); // Only run when number of areas changes
 
-  // Initialize with demo data if no data exists
-  useEffect(() => {
-    if (searchAreas.length === 0 && officers.length === 0) {
-      initializeDemoData();
-    }
-  }, []);
-
-  const initializeDemoData = async () => {
-    setIsInitializing(true);
-
-    // Create a sample search area (Central Park area in NYC)
-    const sampleArea1 = {
-      name: 'Crime Scene Area - Zone A',
-      coordinates: [
-        [40.7829, -73.9654],
-        [40.7829, -73.9580],
-        [40.7689, -73.9580],
-        [40.7689, -73.9654]
-      ],
-      priority: 'high',
-      timeThreshold: 30
-    };
-
-    const sampleArea2 = {
-      name: 'Secondary Search Zone',
-      coordinates: [
-        [40.7689, -73.9654],
-        [40.7689, -73.9580],
-        [40.7589, -73.9580],
-        [40.7589, -73.9654]
-      ],
-      priority: 'medium',
-      timeThreshold: 45
-    };
-
-    // Defer grid generation to avoid blocking UI
-    setTimeout(() => {
-      addSearchAreaWithGrid(sampleArea1);
-
-      // Stagger the second area to further reduce blocking
-      setTimeout(() => {
-        addSearchAreaWithGrid(sampleArea2);
-
-        // Add sample officers after areas are created
-        setTimeout(() => {
-          addOfficer({ officerName: 'Officer Smith' });
-          addOfficer({ officerName: 'Officer Johnson' });
-          addOfficer({ officerName: 'Officer Williams' });
-          setIsInitializing(false);
-        }, 50);
-      }, 50);
-    }, 50);
-  };
+  // No demo data - clean slate on startup
 
   const addSearchAreaWithGrid = (areaData) => {
     // Generate grid in a deferred manner to avoid blocking
@@ -211,158 +159,101 @@ const AppContent = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-md z-10">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-800">
-                Law Enforcement Search Tracker
-              </h1>
-              <div className={`px-3 py-1 rounded-full text-sm ${
-                isRunning ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'
-              }`}>
-                {isRunning ? 'Simulation Active' : 'Simulation Stopped'}
-              </div>
-              {isInitializing && (
-                <div className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 flex items-center space-x-2">
-                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Initializing...</span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => setShowSidebar(!showSidebar)}
-                className="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-sm"
-                title="Toggle Sidebar"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-
-              <button
-                onClick={() => setIsDrawingMode(!isDrawingMode)}
-                className={`px-4 py-2 rounded text-sm ${
-                  isDrawingMode
-                    ? 'bg-red-600 hover:bg-red-700 text-white'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
-              >
-                {isDrawingMode ? 'Cancel Drawing' : 'Draw Search Area'}
-              </button>
-
-              <button
-                onClick={handleToggleSimulation}
-                className={`px-4 py-2 rounded text-sm ${
-                  isSimulationRunning
-                    ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                    : 'bg-green-600 hover:bg-green-700 text-white'
-                }`}
-              >
-                {isSimulationRunning ? 'Stop Simulation' : 'Start Simulation'}
-              </button>
-
-              <div className="border-l pl-2 ml-2 flex space-x-2">
-                <button
-                  onClick={handleExport}
-                  className="px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm"
-                  title="Export Data"
-                >
-                  Export
-                </button>
-                <button
-                  onClick={handleImport}
-                  className="px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-sm"
-                  title="Import Data"
-                >
-                  Import
-                </button>
-                <button
-                  onClick={handleResetClick}
-                  disabled={isResetting}
-                  className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
-                  title="Reset All"
-                >
-                  {isResetting && (
-                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  )}
-                  <span>{isResetting ? 'Resetting...' : 'Reset'}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="flex flex-col h-screen bg-tactical-bg-primary tactical-grid-bg">
+      {/* Tactical Header */}
+      <TacticalHeader
+        missionStartTime={missionStartTime}
+        onToggleSimulation={handleToggleSimulation}
+        onToggleDrawing={() => setIsDrawingMode(!isDrawingMode)}
+        isDrawingMode={isDrawingMode}
+      />
 
       {/* Main content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
+        {/* Tactical Sidebar */}
         {showSidebar && (
-          <aside className="w-96 bg-white shadow-lg overflow-hidden flex flex-col">
+          <aside className="w-96 bg-tactical-bg-secondary border-r border-tactical-border shadow-xl overflow-hidden flex flex-col">
             {/* Tabs */}
-            <div className="flex border-b">
+            <div className="flex border-b border-tactical-border bg-tactical-bg-tertiary">
               <button
-                onClick={() => setActiveTab('dashboard')}
-                className={`flex-1 px-4 py-3 text-sm font-medium ${
-                  activeTab === 'dashboard'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-800'
+                onClick={() => setActiveTab('mission')}
+                className={`flex-1 px-3 py-3 text-xs font-semibold tracking-wider transition-all ${
+                  activeTab === 'mission'
+                    ? 'border-b-2 border-tactical-accent-primary text-tactical-accent-primary bg-tactical-bg-secondary'
+                    : 'text-tactical-text-secondary hover:text-tactical-text-primary'
                 }`}
+                style={{ fontFamily: 'Rajdhani, sans-serif' }}
               >
-                Dashboard
+                MISSION
               </button>
               <button
-                onClick={() => setActiveTab('areas')}
-                className={`flex-1 px-4 py-3 text-sm font-medium ${
-                  activeTab === 'areas'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-800'
+                onClick={() => setActiveTab('zones')}
+                className={`flex-1 px-3 py-3 text-xs font-semibold tracking-wider transition-all ${
+                  activeTab === 'zones'
+                    ? 'border-b-2 border-tactical-accent-primary text-tactical-accent-primary bg-tactical-bg-secondary'
+                    : 'text-tactical-text-secondary hover:text-tactical-text-primary'
                 }`}
+                style={{ fontFamily: 'Rajdhani, sans-serif' }}
               >
-                Areas
+                ZONES
               </button>
               <button
-                onClick={() => setActiveTab('devices')}
-                className={`flex-1 px-4 py-3 text-sm font-medium ${
-                  activeTab === 'devices'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 hover:text-gray-800'
+                onClick={() => setActiveTab('officers')}
+                className={`flex-1 px-3 py-3 text-xs font-semibold tracking-wider transition-all ${
+                  activeTab === 'officers'
+                    ? 'border-b-2 border-tactical-accent-primary text-tactical-accent-primary bg-tactical-bg-secondary'
+                    : 'text-tactical-text-secondary hover:text-tactical-text-primary'
                 }`}
+                style={{ fontFamily: 'Rajdhani, sans-serif' }}
               >
-                Officers
+                OFFICERS
+              </button>
+              <button
+                onClick={() => setActiveTab('activity')}
+                className={`flex-1 px-3 py-3 text-xs font-semibold tracking-wider transition-all ${
+                  activeTab === 'activity'
+                    ? 'border-b-2 border-tactical-accent-primary text-tactical-accent-primary bg-tactical-bg-secondary'
+                    : 'text-tactical-text-secondary hover:text-tactical-text-primary'
+                }`}
+                style={{ fontFamily: 'Rajdhani, sans-serif' }}
+              >
+                ACTIVITY
               </button>
             </div>
 
             {/* Tab content */}
             <div className="flex-1 overflow-hidden">
-              {activeTab === 'dashboard' && <MainDashboard />}
-              {activeTab === 'areas' && (
-                <div className="h-full overflow-y-auto p-4 space-y-4">
-                  <AreaList />
-                </div>
-              )}
-              {activeTab === 'devices' && (
-                <div className="h-full overflow-y-auto p-4 space-y-4">
-                  <DeviceManager />
-                </div>
-              )}
+              {activeTab === 'mission' && <MissionControlPanel />}
+              {activeTab === 'zones' && <ZoneManagementPanel />}
+              {activeTab === 'officers' && <OfficerManagementPanel />}
+              {activeTab === 'activity' && <TacticalActivityLog />}
             </div>
 
-            {/* Alerts section */}
-            <div className="border-t p-4 max-h-80 overflow-hidden">
-              <AlertPanel />
-            </div>
+            {/* Toggle Sidebar Button */}
+            <button
+              onClick={() => setShowSidebar(false)}
+              className="p-3 border-t border-tactical-border bg-tactical-bg-tertiary hover:bg-tactical-bg-secondary text-tactical-text-secondary hover:text-tactical-accent-primary transition-all text-xs font-semibold tracking-wider"
+              style={{ fontFamily: 'Rajdhani, sans-serif' }}
+            >
+              <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+              </svg>
+              COLLAPSE PANEL
+            </button>
           </aside>
+        )}
+
+        {/* Expand Sidebar Button (when collapsed) */}
+        {!showSidebar && (
+          <button
+            onClick={() => setShowSidebar(true)}
+            className="absolute top-20 left-4 z-[1000] btn-tactical"
+          >
+            <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+            EXPAND
+          </button>
         )}
 
         {/* Map */}
@@ -371,12 +262,55 @@ const AppContent = () => {
             isDrawingMode={isDrawingMode}
             onAreaCreated={handleAreaCreated}
           />
+
+          {/* System Controls Overlay */}
+          <div className="absolute bottom-4 right-4 z-[999] space-y-2">
+            <button
+              onClick={handleExport}
+              className="btn-tactical block w-full text-xs"
+              title="Export Data"
+            >
+              <svg className="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              EXPORT
+            </button>
+            <button
+              onClick={handleImport}
+              className="btn-tactical block w-full text-xs"
+              title="Import Data"
+            >
+              <svg className="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              IMPORT
+            </button>
+            <button
+              onClick={handleResetClick}
+              disabled={isResetting}
+              className="btn-tactical btn-tactical-danger block w-full text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Reset All"
+            >
+              {isResetting ? (
+                <>
+                  <svg className="animate-spin h-3 w-3 inline mr-1" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  RESETTING
+                </>
+              ) : (
+                <>
+                  <svg className="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  RESET
+                </>
+              )}
+            </button>
+          </div>
         </main>
       </div>
-
-      {/* Playback controls */}
-      <PlaybackControls />
-      <TimelineSlider />
 
       {/* Reset confirmation modal */}
       <ConfirmModal

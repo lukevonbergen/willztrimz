@@ -4,25 +4,23 @@ const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, confirmText
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-80 backdrop-blur-sm">
+      <div className="tactical-panel glow-border-strong max-w-md w-full mx-4 animate-fadeIn">
         <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-          <p className="text-sm text-gray-600 mb-6">{message}</p>
+          <div className="tactical-panel-header mb-4">{title}</div>
+          <p className="text-sm text-tactical-text-primary mb-6 leading-relaxed">{message}</p>
 
           <div className="flex space-x-3 justify-end">
             <button
               onClick={onCancel}
-              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded text-sm font-medium"
+              className="btn-tactical px-4 py-2"
             >
               {cancelText}
             </button>
             <button
               onClick={onConfirm}
-              className={`px-4 py-2 rounded text-sm font-medium ${
-                isDangerous
-                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              className={`btn-tactical px-4 py-2 ${
+                isDangerous ? 'btn-tactical-danger' : 'btn-tactical-success'
               }`}
             >
               {confirmText}
@@ -30,6 +28,22 @@ const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, confirmText
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+      `}</style>
     </div>
   );
 };

@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tactical Operations System - Premium Dark Theme */
+:root {
+  --tactical-bg-primary: #0a0e1a;
+  --tactical-bg-secondary: #131722;
+  --tactical-bg-tertiary: #1a1f2e;
+  --tactical-accent-primary: #00d9ff;
+  --tactical-accent-secondary: #0066ff;
+  --tactical-success: #00ff88;
+  --tactical-warning: #ffaa00;
+  --tactical-danger: #ff3366;
+  --tactical-text-primary: #e8eaed;
+  --tactical-text-secondary: #9ca3af;
+  --tactical-border: rgba(0, 217, 255, 0.2);
+  --tactical-glow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -9,20 +25,173 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Rajdhani', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--tactical-bg-primary);
+  color: var(--tactical-text-primary);
 }
 
+/* Import tactical font */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+/* Tactical Grid Background */
+.tactical-grid-bg {
+  background-image:
+    linear-gradient(rgba(0, 217, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Glowing borders */
+.glow-border {
+  border: 1px solid var(--tactical-border);
+  box-shadow: var(--tactical-glow);
+}
+
+.glow-border-strong {
+  border: 1px solid var(--tactical-accent-primary);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+}
+
+/* Tactical buttons */
+.btn-tactical {
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 217, 255, 0.1));
+  border: 1px solid var(--tactical-accent-primary);
+  color: var(--tactical-accent-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-tactical:hover {
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.4), rgba(0, 217, 255, 0.2));
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-tactical:active {
+  transform: translateY(0);
+}
+
+.btn-tactical-danger {
+  background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 0, 68, 0.1));
+  border-color: var(--tactical-danger);
+  color: var(--tactical-danger);
+}
+
+.btn-tactical-danger:hover {
+  background: linear-gradient(135deg, rgba(255, 51, 102, 0.4), rgba(255, 0, 68, 0.2));
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+}
+
+.btn-tactical-success {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 200, 100, 0.1));
+  border-color: var(--tactical-success);
+  color: var(--tactical-success);
+}
+
+.btn-tactical-success:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.4), rgba(0, 200, 100, 0.2));
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+/* Tactical panels */
+.tactical-panel {
+  background: var(--tactical-bg-secondary);
+  border: 1px solid var(--tactical-border);
+  border-radius: 8px;
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.tactical-panel-header {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tactical-accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--tactical-border);
+}
+
+/* Status indicators */
+.status-active {
+  color: var(--tactical-success);
+  text-shadow: 0 0 5px var(--tactical-success);
+}
+
+.status-warning {
+  color: var(--tactical-warning);
+  text-shadow: 0 0 5px var(--tactical-warning);
+}
+
+.status-danger {
+  color: var(--tactical-danger);
+  text-shadow: 0 0 5px var(--tactical-danger);
+}
+
+.status-inactive {
+  color: var(--tactical-text-secondary);
+}
+
+/* Pulsing effect */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 5px currentColor;
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 20px currentColor;
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Scanning line effect */
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.scanning-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--tactical-accent-primary), transparent);
+  animation: scan 3s linear infinite;
+}
+
+/* Leaflet map styling */
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 0;
+  background: #0d1117 !important;
+  filter: brightness(0.9) contrast(1.1);
 }
 
-/* Ensure Leaflet Draw controls are always clickable and visible */
+.leaflet-tile {
+  filter: grayscale(1) invert(1) contrast(1.2) brightness(0.3);
+}
+
+/* Ensure Leaflet Draw controls are visible */
 .leaflet-draw-toolbar,
 .leaflet-draw-actions,
 .leaflet-draw-tooltip {
@@ -33,19 +202,16 @@ body {
 
 .leaflet-draw-toolbar a,
 .leaflet-draw-actions a {
+  background-color: var(--tactical-bg-secondary) !important;
+  border: 1px solid var(--tactical-accent-primary) !important;
   pointer-events: auto !important;
   cursor: pointer !important;
 }
 
-/* Make sure drawing tools work when map dragging is disabled */
-.leaflet-container.leaflet-grab {
-  cursor: crosshair;
-}
-
-/* Drawing mode cursor */
-.leaflet-draw-draw-polygon,
-.leaflet-draw-draw-rectangle {
-  cursor: crosshair !important;
+.leaflet-draw-toolbar a:hover,
+.leaflet-draw-actions a:hover {
+  background-color: var(--tactical-bg-tertiary) !important;
+  box-shadow: var(--tactical-glow) !important;
 }
 
 /* Custom scrollbar */
@@ -55,14 +221,173 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--tactical-bg-primary);
+  border: 1px solid var(--tactical-border);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: linear-gradient(180deg, var(--tactical-accent-secondary), var(--tactical-accent-primary));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--tactical-accent-primary);
+  box-shadow: var(--tactical-glow);
+}
+
+/* Data grid styling */
+.data-grid {
+  display: grid;
+  gap: 0.5rem;
+  font-family: 'Rajdhani', monospace;
+  font-size: 0.875rem;
+}
+
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background: rgba(0, 217, 255, 0.05);
+  border-left: 2px solid var(--tactical-accent-primary);
+  transition: all 0.2s ease;
+}
+
+.data-row:hover {
+  background: rgba(0, 217, 255, 0.1);
+  border-left-color: var(--tactical-success);
+}
+
+.data-label {
+  color: var(--tactical-text-secondary);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.data-value {
+  color: var(--tactical-text-primary);
+  font-weight: 600;
+  font-family: 'Orbitron', monospace;
+}
+
+/* Mission timer */
+.mission-timer {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--tactical-accent-primary);
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+  letter-spacing: 2px;
+}
+
+/* Tactical input fields */
+.tactical-input {
+  background: rgba(0, 217, 255, 0.05);
+  border: 1px solid var(--tactical-border);
+  color: var(--tactical-text-primary);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: 'Rajdhani', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.tactical-input:focus {
+  outline: none;
+  border-color: var(--tactical-accent-primary);
+  box-shadow: var(--tactical-glow);
+  background: rgba(0, 217, 255, 0.1);
+}
+
+.tactical-input::placeholder {
+  color: var(--tactical-text-secondary);
+}
+
+/* Progress bars */
+.progress-bar {
+  height: 4px;
+  background: rgba(0, 217, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tactical-accent-secondary), var(--tactical-accent-primary));
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px var(--tactical-accent-primary);
+}
+
+/* Badge styling */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background: rgba(0, 255, 136, 0.2);
+  color: var(--tactical-success);
+  border: 1px solid var(--tactical-success);
+}
+
+.badge-warning {
+  background: rgba(255, 170, 0, 0.2);
+  color: var(--tactical-warning);
+  border: 1px solid var(--tactical-warning);
+}
+
+.badge-danger {
+  background: rgba(255, 51, 102, 0.2);
+  color: var(--tactical-danger);
+  border: 1px solid var(--tactical-danger);
+}
+
+.badge-info {
+  background: rgba(0, 217, 255, 0.2);
+  color: var(--tactical-accent-primary);
+  border: 1px solid var(--tactical-accent-primary);
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  border: 2px solid rgba(0, 217, 255, 0.2);
+  border-top-color: var(--tactical-accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Tactical tooltip */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--tactical-bg-tertiary);
+  color: var(--tactical-text-primary);
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--tactical-accent-primary);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
 }

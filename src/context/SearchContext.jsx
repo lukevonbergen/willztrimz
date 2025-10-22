@@ -120,11 +120,15 @@ export const SearchProvider = ({ children }) => {
     const newOfficer = {
       id: officerData.id || `officer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       officerName: officerData.officerName || `Officer ${officers.length + 1}`,
+      badgeNumber: officerData.badgeNumber || null,
+      rank: officerData.rank || 'Officer',
       active: true,
       currentLocation: officerData.currentLocation || null,
+      assignedZone: officerData.assignedZone || null,
       path: [],
       color: OFFICER_COLORS[officers.length % OFFICER_COLORS.length],
-      startTime: Date.now()
+      startTime: Date.now(),
+      distanceTraveled: 0
     };
     setOfficers(prev => [...prev, newOfficer]);
     return newOfficer;
@@ -140,6 +144,20 @@ export const SearchProvider = ({ children }) => {
   // Remove officer
   const removeOfficer = useCallback((officerId) => {
     setOfficers(prev => prev.filter(officer => officer.id !== officerId));
+  }, []);
+
+  // Assign officer to zone
+  const assignOfficerToZone = useCallback((officerId, zoneId) => {
+    setOfficers(prev => prev.map(officer =>
+      officer.id === officerId ? { ...officer, assignedZone: zoneId } : officer
+    ));
+  }, []);
+
+  // Unassign officer from zone
+  const unassignOfficerFromZone = useCallback((officerId) => {
+    setOfficers(prev => prev.map(officer =>
+      officer.id === officerId ? { ...officer, assignedZone: null } : officer
+    ));
   }, []);
 
   // Add location to officer's path
@@ -232,6 +250,8 @@ export const SearchProvider = ({ children }) => {
     addOfficer,
     updateOfficer,
     removeOfficer,
+    assignOfficerToZone,
+    unassignOfficerFromZone,
     addOfficerLocation,
     addAlert,
     clearAlert,
