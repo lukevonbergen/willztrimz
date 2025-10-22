@@ -4,8 +4,7 @@ import { useMap } from 'react-leaflet';
 /**
  * MapController component
  * Controls map interactions based on drawing mode
- * NOTE: Leaflet Draw handles its own interactions, so we don't disable anything
- * We just provide visual feedback (cursor) when in drawing mode
+ * Disables map dragging entirely when in drawing mode to allow drawing tools to work
  */
 const MapController = ({ isDrawingMode }) => {
   const map = useMap();
@@ -14,21 +13,21 @@ const MapController = ({ isDrawingMode }) => {
     if (!map) return;
 
     if (isDrawingMode) {
-      // Don't disable any map interactions - Leaflet Draw needs them!
-      // Just change cursor to indicate drawing mode
-      const container = map.getContainer();
-      container.classList.add('drawing-mode');
+      // Disable map dragging when in drawing mode
+      // This prevents the map from panning while trying to draw
+      map.dragging.disable();
+      console.log('Drawing mode ON - map dragging disabled');
     } else {
-      // Remove drawing mode class
-      const container = map.getContainer();
-      container.classList.remove('drawing-mode');
+      // Re-enable map dragging when not in drawing mode
+      map.dragging.enable();
+      console.log('Drawing mode OFF - map dragging enabled');
     }
 
     // Cleanup function
     return () => {
       if (map) {
-        const container = map.getContainer();
-        container.classList.remove('drawing-mode');
+        // Always re-enable dragging on cleanup
+        map.dragging.enable();
       }
     };
   }, [map, isDrawingMode]);

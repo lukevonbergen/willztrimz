@@ -52,25 +52,10 @@ const AreaDrawingTool = ({ onAreaCreated }) => {
 
     map.addControl(drawControl);
 
-    // Disable map dragging when drawing starts
-    const onDrawStart = () => {
-      console.log('Drawing started - disabling map drag');
-      map.dragging.disable();
-    };
-
-    // Re-enable map dragging when drawing stops
-    const onDrawStop = () => {
-      console.log('Drawing stopped - enabling map drag');
-      map.dragging.enable();
-    };
-
     // Handle shape creation
     const onDrawCreated = (e) => {
       const layer = e.layer;
       drawnItems.addLayer(layer);
-
-      // Re-enable dragging after shape is created
-      map.dragging.enable();
 
       // Convert to our coordinate format [lat, lng]
       let coordinates;
@@ -91,20 +76,13 @@ const AreaDrawingTool = ({ onAreaCreated }) => {
       }
     };
 
-    // Listen for draw events
-    map.on(L.Draw.Event.DRAWSTART, onDrawStart);
-    map.on(L.Draw.Event.DRAWSTOP, onDrawStop);
     map.on(L.Draw.Event.CREATED, onDrawCreated);
 
     // Cleanup
     return () => {
-      map.off(L.Draw.Event.DRAWSTART, onDrawStart);
-      map.off(L.Draw.Event.DRAWSTOP, onDrawStop);
       map.off(L.Draw.Event.CREATED, onDrawCreated);
       map.removeControl(drawControl);
       map.removeLayer(drawnItems);
-      // Ensure dragging is re-enabled on unmount
-      map.dragging.enable();
     };
   }, [map, onAreaCreated]);
 

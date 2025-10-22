@@ -98,7 +98,7 @@ const LocationSearch = ({ onLocationFound }) => {
   };
 
   return (
-    <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-lg p-3 w-80">
+    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white rounded-lg shadow-lg p-3 w-80">
       <form onSubmit={handleSearch} className="space-y-2">
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
