@@ -26,6 +26,7 @@ export const SearchProvider = ({ children }) => {
   // Core state
   const [searchAreas, setSearchAreas] = useState([]);
   const [officers, setOfficers] = useState([]);
+  const [pointsOfInterest, setPointsOfInterest] = useState([]);
   const [isSimulationRunning, setIsSimulationRunning] = useState(false);
   const [simulationSpeed, setSimulationSpeed] = useState(1);
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -45,6 +46,7 @@ export const SearchProvider = ({ children }) => {
         const parsed = JSON.parse(savedState);
         if (parsed.searchAreas) setSearchAreas(parsed.searchAreas);
         if (parsed.officers) setOfficers(parsed.officers);
+        if (parsed.pointsOfInterest) setPointsOfInterest(parsed.pointsOfInterest);
         if (parsed.alerts) setAlerts(parsed.alerts);
       } catch (e) {
         console.error('Error loading saved state:', e);
@@ -70,6 +72,7 @@ export const SearchProvider = ({ children }) => {
           // Limit path history to last 1000 points to save space
           path: o.path.slice(-1000)
         })),
+        pointsOfInterest: pointsOfInterest,
         alerts: alerts.slice(0, 20) // Only save last 20 alerts
       };
       localStorage.setItem('searchTrackerState', JSON.stringify(stateToSave));
@@ -81,7 +84,7 @@ export const SearchProvider = ({ children }) => {
         localStorage.removeItem('searchTrackerState');
       }
     }
-  }, [searchAreas, officers, alerts]);
+  }, [searchAreas, officers, pointsOfInterest, alerts]);
 
   // Add a new search area
   const addSearchArea = useCallback((area) => {
@@ -175,6 +178,35 @@ export const SearchProvider = ({ children }) => {
     }));
   }, []);
 
+  // Add Point of Interest
+  const addPointOfInterest = useCallback((poi) => {
+    const newPOI = {
+      id: `poi-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: poi.name || 'Unnamed POI',
+      type: poi.type || 'general', // evidence, witness, vehicle, suspect, general
+      location: poi.location,
+      description: poi.description || '',
+      timestamp: Date.now(),
+      assignedOfficer: poi.assignedOfficer || null,
+      priority: poi.priority || 'medium',
+      status: poi.status || 'active' // active, investigated, cleared
+    };
+    setPointsOfInterest(prev => [...prev, newPOI]);
+    return newPOI;
+  }, []);
+
+  // Update Point of Interest
+  const updatePointOfInterest = useCallback((poiId, updates) => {
+    setPointsOfInterest(prev => prev.map(poi =>
+      poi.id === poiId ? { ...poi, ...updates } : poi
+    ));
+  }, []);
+
+  // Remove Point of Interest
+  const removePointOfInterest = useCallback((poiId) => {
+    setPointsOfInterest(prev => prev.filter(poi => poi.id !== poiId));
+  }, []);
+
   // Add alert
   const addAlert = useCallback((alert) => {
     const newAlert = {
@@ -206,6 +238,7 @@ export const SearchProvider = ({ children }) => {
     // These will be batched into a single re-render
     setSearchAreas([]);
     setOfficers([]);
+    setPointsOfInterest([]);
     setAlerts([]);
     setIsSimulationRunning(false);
     setIsPlaybackMode(false);
@@ -218,15 +251,17 @@ export const SearchProvider = ({ children }) => {
     return {
       searchAreas,
       officers,
+      pointsOfInterest,
       alerts,
       exportedAt: Date.now()
     };
-  }, [searchAreas, officers, alerts]);
+  }, [searchAreas, officers, pointsOfInterest, alerts]);
 
   // Import data
   const importData = useCallback((data) => {
     if (data.searchAreas) setSearchAreas(data.searchAreas);
     if (data.officers) setOfficers(data.officers);
+    if (data.pointsOfInterest) setPointsOfInterest(data.pointsOfInterest);
     if (data.alerts) setAlerts(data.alerts);
   }, []);
 
@@ -234,6 +269,7 @@ export const SearchProvider = ({ children }) => {
     // State
     searchAreas,
     officers,
+    pointsOfInterest,
     isSimulationRunning,
     simulationSpeed,
     currentTime,
@@ -253,6 +289,9 @@ export const SearchProvider = ({ children }) => {
     assignOfficerToZone,
     unassignOfficerFromZone,
     addOfficerLocation,
+    addPointOfInterest,
+    updatePointOfInterest,
+    removePointOfInterest,
     addAlert,
     clearAlert,
     clearAllAlerts,

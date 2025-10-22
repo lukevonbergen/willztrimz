@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { useSearch } from '../../context/SearchContext';
 import AreaDrawingTool from './AreaDrawingTool';
 import OfficerMarkers from './OfficerMarkers';
+import POIMarkers from './POIMarkers';
 import CoverageLayer from './CoverageLayer';
 import SearchAreaPolygons from './SearchAreaPolygons';
 import LocationSearch from './LocationSearch';
@@ -46,6 +47,9 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
 
         {/* Officer markers and paths */}
         <OfficerMarkers />
+
+        {/* Points of Interest markers */}
+        <POIMarkers />
 
         {/* Drawing tool (only active when in drawing mode) */}
         {isDrawingMode && <AreaDrawingTool onAreaCreated={onAreaCreated} />}

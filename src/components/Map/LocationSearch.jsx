@@ -98,29 +98,29 @@ const LocationSearch = ({ onLocationFound }) => {
   };
 
   return (
-    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-white rounded-lg shadow-lg p-3 w-80">
+    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] tactical-panel glow-border-strong p-3 w-80">
       <form onSubmit={handleSearch} className="space-y-2">
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">
-            Search Location (Postcode or Coordinates)
+          <label className="data-label block mb-2" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+            LOCATE COORDINATES
           </label>
           <div className="flex space-x-2">
             <input
               type="text"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="e.g., SW1A 1AA or 51.5074, -0.1278"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Postcode / Coordinates / Address"
+              className="tactical-input flex-1 text-xs"
               disabled={isSearching}
             />
             {searchValue && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="px-2 py-2 text-gray-400 hover:text-gray-600"
+                className="px-2 py-2 text-tactical-text-secondary hover:text-tactical-danger transition-colors"
                 title="Clear"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -131,22 +131,39 @@ const LocationSearch = ({ onLocationFound }) => {
         <button
           type="submit"
           disabled={isSearching || !searchValue.trim()}
-          className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className="btn-tactical btn-tactical-success w-full text-xs disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSearching ? 'Searching...' : 'Search & Center Map'}
+          {isSearching ? (
+            <>
+              <svg className="animate-spin h-3 w-3 inline mr-2" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              SEARCHING...
+            </>
+          ) : (
+            <>
+              <svg className="w-3 h-3 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              SEARCH & CENTER
+            </>
+          )}
         </button>
 
         {error && (
-          <div className="text-xs text-red-600 bg-red-50 p-2 rounded">
+          <div className="text-xs text-tactical-danger bg-tactical-danger bg-opacity-10 border border-tactical-danger p-2 rounded">
             {error}
           </div>
         )}
 
-        <div className="text-xs text-gray-500 mt-2">
-          <div className="font-medium mb-1">Examples:</div>
-          <div>• Postcode: SW1A 1AA, 10001, etc.</div>
-          <div>• Coordinates: 51.5074, -0.1278</div>
-          <div>• Address: Central Park, New York</div>
+        <div className="text-xs text-tactical-text-secondary mt-2 bg-tactical-bg-tertiary p-2 rounded">
+          <div className="font-semibold mb-1 text-tactical-accent-primary" style={{ fontFamily: 'Orbitron, monospace' }}>
+            EXAMPLES:
+          </div>
+          <div>• Postcode: SW1A 1AA, 10001</div>
+          <div>• Coords: 51.5074, -0.1278</div>
+          <div>• Address: Central Park</div>
         </div>
       </form>
     </div>
