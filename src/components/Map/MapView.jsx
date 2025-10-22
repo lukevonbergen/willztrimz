@@ -7,6 +7,8 @@ import CoverageLayer from './CoverageLayer';
 import SearchAreaPolygons from './SearchAreaPolygons';
 import LocationSearch from './LocationSearch';
 import MapController from './MapController';
+import EvidenceMarkers from '../Evidence/EvidenceMarkers';
+import CheckpointMarkers from '../Checkpoints/CheckpointMarkers';
 
 // Default center (can be changed to any location)
 const DEFAULT_CENTER = [40.7128, -74.0060]; // New York City
@@ -46,6 +48,12 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
 
         {/* Officer markers and paths */}
         <OfficerMarkers />
+
+        {/* Evidence markers */}
+        <EvidenceMarkers />
+
+        {/* Checkpoint markers */}
+        <CheckpointMarkers />
 
         {/* Drawing tool (only active when in drawing mode) */}
         {isDrawingMode && <AreaDrawingTool onAreaCreated={onAreaCreated} />}

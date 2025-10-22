@@ -30,6 +30,12 @@ export const SearchProvider = ({ children }) => {
   const [simulationSpeed, setSimulationSpeed] = useState(1);
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [alerts, setAlerts] = useState([]);
+  const [evidenceMarkers, setEvidenceMarkers] = useState([]);
+  const [incidents, setIncidents] = useState([]);
+  const [checkpoints, setCheckpoints] = useState([]);
+  const [operations, setOperations] = useState([]);
+  const [resources, setResources] = useState([]);
+  const [communications, setCommunications] = useState([]);
 
   // Playback state
   const [isPlaybackMode, setIsPlaybackMode] = useState(false);
@@ -46,6 +52,12 @@ export const SearchProvider = ({ children }) => {
         if (parsed.searchAreas) setSearchAreas(parsed.searchAreas);
         if (parsed.officers) setOfficers(parsed.officers);
         if (parsed.alerts) setAlerts(parsed.alerts);
+        if (parsed.evidenceMarkers) setEvidenceMarkers(parsed.evidenceMarkers);
+        if (parsed.incidents) setIncidents(parsed.incidents);
+        if (parsed.checkpoints) setCheckpoints(parsed.checkpoints);
+        if (parsed.operations) setOperations(parsed.operations);
+        if (parsed.resources) setResources(parsed.resources);
+        if (parsed.communications) setCommunications(parsed.communications);
       } catch (e) {
         console.error('Error loading saved state:', e);
       }
@@ -70,7 +82,13 @@ export const SearchProvider = ({ children }) => {
           // Limit path history to last 1000 points to save space
           path: o.path.slice(-1000)
         })),
-        alerts: alerts.slice(0, 20) // Only save last 20 alerts
+        alerts: alerts.slice(0, 20), // Only save last 20 alerts
+        evidenceMarkers,
+        incidents,
+        checkpoints,
+        operations,
+        resources,
+        communications: communications.slice(0, 100) // Limit to 100 messages
       };
       localStorage.setItem('searchTrackerState', JSON.stringify(stateToSave));
     } catch (e) {
@@ -178,6 +196,125 @@ export const SearchProvider = ({ children }) => {
     setAlerts([]);
   }, []);
 
+  // Evidence marker functions
+  const addEvidence = useCallback((evidence) => {
+    const newEvidence = {
+      id: `evidence-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...evidence,
+      timestamp: evidence.timestamp || Date.now()
+    };
+    setEvidenceMarkers(prev => [...prev, newEvidence]);
+    return newEvidence;
+  }, []);
+
+  const updateEvidence = useCallback((evidenceId, updates) => {
+    setEvidenceMarkers(prev => prev.map(e =>
+      e.id === evidenceId ? { ...e, ...updates } : e
+    ));
+  }, []);
+
+  const deleteEvidence = useCallback((evidenceId) => {
+    setEvidenceMarkers(prev => prev.filter(e => e.id !== evidenceId));
+  }, []);
+
+  // Incident functions
+  const addIncident = useCallback((incident) => {
+    const newIncident = {
+      id: `incident-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...incident,
+      timestamp: incident.timestamp || Date.now(),
+      status: incident.status || 'open'
+    };
+    setIncidents(prev => [...prev, newIncident]);
+    return newIncident;
+  }, []);
+
+  const updateIncident = useCallback((incidentId, updates) => {
+    setIncidents(prev => prev.map(i =>
+      i.id === incidentId ? { ...i, ...updates } : i
+    ));
+  }, []);
+
+  const deleteIncident = useCallback((incidentId) => {
+    setIncidents(prev => prev.filter(i => i.id !== incidentId));
+  }, []);
+
+  // Checkpoint functions
+  const addCheckpoint = useCallback((checkpoint) => {
+    const newCheckpoint = {
+      id: `checkpoint-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...checkpoint,
+      status: checkpoint.status || 'pending',
+      timestamp: Date.now()
+    };
+    setCheckpoints(prev => [...prev, newCheckpoint]);
+    return newCheckpoint;
+  }, []);
+
+  const updateCheckpoint = useCallback((checkpointId, updates) => {
+    setCheckpoints(prev => prev.map(c =>
+      c.id === checkpointId ? { ...c, ...updates } : c
+    ));
+  }, []);
+
+  const deleteCheckpoint = useCallback((checkpointId) => {
+    setCheckpoints(prev => prev.filter(c => c.id !== checkpointId));
+  }, []);
+
+  // Operation functions
+  const addOperation = useCallback((operation) => {
+    const newOperation = {
+      id: `operation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...operation,
+      createdAt: Date.now(),
+      status: operation.status || 'planning'
+    };
+    setOperations(prev => [...prev, newOperation]);
+    return newOperation;
+  }, []);
+
+  const updateOperation = useCallback((operationId, updates) => {
+    setOperations(prev => prev.map(o =>
+      o.id === operationId ? { ...o, ...updates } : o
+    ));
+  }, []);
+
+  const deleteOperation = useCallback((operationId) => {
+    setOperations(prev => prev.filter(o => o.id !== operationId));
+  }, []);
+
+  // Resource functions
+  const addResource = useCallback((resource) => {
+    const newResource = {
+      id: `resource-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...resource,
+      createdAt: Date.now()
+    };
+    setResources(prev => [...prev, newResource]);
+    return newResource;
+  }, []);
+
+  const updateResource = useCallback((resourceId, updates) => {
+    setResources(prev => prev.map(r =>
+      r.id === resourceId ? { ...r, ...updates } : r
+    ));
+  }, []);
+
+  const deleteResource = useCallback((resourceId) => {
+    setResources(prev => prev.filter(r => r.id !== resourceId));
+  }, []);
+
+  // Communication functions
+  const addCommunication = useCallback((communication) => {
+    const newCommunication = {
+      id: `comm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...communication,
+      timestamp: communication.timestamp || Date.now()
+    };
+    setCommunications(prev => [newCommunication, ...prev].slice(0, 200)); // Keep last 200
+    return newCommunication;
+  }, []);
+
   // Reset entire application
   const resetAll = useCallback(() => {
     // Batch state updates to reduce re-renders
@@ -189,6 +326,12 @@ export const SearchProvider = ({ children }) => {
     setSearchAreas([]);
     setOfficers([]);
     setAlerts([]);
+    setEvidenceMarkers([]);
+    setIncidents([]);
+    setCheckpoints([]);
+    setOperations([]);
+    setResources([]);
+    setCommunications([]);
     setIsSimulationRunning(false);
     setIsPlaybackMode(false);
     setPlaybackTime(null);
@@ -201,15 +344,27 @@ export const SearchProvider = ({ children }) => {
       searchAreas,
       officers,
       alerts,
+      evidenceMarkers,
+      incidents,
+      checkpoints,
+      operations,
+      resources,
+      communications,
       exportedAt: Date.now()
     };
-  }, [searchAreas, officers, alerts]);
+  }, [searchAreas, officers, alerts, evidenceMarkers, incidents, checkpoints, operations, resources, communications]);
 
   // Import data
   const importData = useCallback((data) => {
     if (data.searchAreas) setSearchAreas(data.searchAreas);
     if (data.officers) setOfficers(data.officers);
     if (data.alerts) setAlerts(data.alerts);
+    if (data.evidenceMarkers) setEvidenceMarkers(data.evidenceMarkers);
+    if (data.incidents) setIncidents(data.incidents);
+    if (data.checkpoints) setCheckpoints(data.checkpoints);
+    if (data.operations) setOperations(data.operations);
+    if (data.resources) setResources(data.resources);
+    if (data.communications) setCommunications(data.communications);
   }, []);
 
   const value = {
@@ -220,6 +375,12 @@ export const SearchProvider = ({ children }) => {
     simulationSpeed,
     currentTime,
     alerts,
+    evidenceMarkers,
+    incidents,
+    checkpoints,
+    operations,
+    resources,
+    communications,
     isPlaybackMode,
     playbackTime,
     playbackSpeed,
@@ -236,6 +397,22 @@ export const SearchProvider = ({ children }) => {
     addAlert,
     clearAlert,
     clearAllAlerts,
+    addEvidence,
+    updateEvidence,
+    deleteEvidence,
+    addIncident,
+    updateIncident,
+    deleteIncident,
+    addCheckpoint,
+    updateCheckpoint,
+    deleteCheckpoint,
+    addOperation,
+    updateOperation,
+    deleteOperation,
+    addResource,
+    updateResource,
+    deleteResource,
+    addCommunication,
     resetAll,
     exportData,
     importData,

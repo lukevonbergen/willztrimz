@@ -9,7 +9,12 @@ const DeviceManager = () => {
   const handleAddOfficer = () => {
     if (newOfficerName.trim()) {
       addOfficer({
-        officerName: newOfficerName.trim()
+        officerName: newOfficerName.trim(),
+        status: 'available',
+        vitals: {
+          heartRate: 70 + Math.floor(Math.random() * 30),
+          battery: 80 + Math.floor(Math.random() * 20)
+        }
       });
       setNewOfficerName('');
       setShowAddForm(false);
