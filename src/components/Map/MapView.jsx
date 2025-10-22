@@ -5,6 +5,7 @@ import AreaDrawingTool from './AreaDrawingTool';
 import OfficerMarkers from './OfficerMarkers';
 import CoverageLayer from './CoverageLayer';
 import SearchAreaPolygons from './SearchAreaPolygons';
+import LocationSearch from './LocationSearch';
 
 // Default center (can be changed to any location)
 const DEFAULT_CENTER = [40.7128, -74.0060]; // New York City
@@ -38,6 +39,9 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
 
         {/* Drawing tool (only active when in drawing mode) */}
         {isDrawingMode && <AreaDrawingTool onAreaCreated={onAreaCreated} />}
+
+        {/* Location search (only active when in drawing mode) */}
+        {isDrawingMode && <LocationSearch />}
       </MapContainer>
 
       {/* Map controls overlay */}

@@ -27,6 +27,7 @@ const AppContent = () => {
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, areas, devices
+  const [isInitializing, setIsInitializing] = useState(false);
 
   const { isRunning } = useSimulation();
 
@@ -37,7 +38,9 @@ const AppContent = () => {
     }
   }, []);
 
-  const initializeDemoData = () => {
+  const initializeDemoData = async () => {
+    setIsInitializing(true);
+
     // Create a sample search area (Central Park area in NYC)
     const sampleArea1 = {
       name: 'Crime Scene Area - Zone A',
@@ -63,26 +66,35 @@ const AppContent = () => {
       timeThreshold: 45
     };
 
-    // Add areas with grid
-    const area1 = addSearchAreaWithGrid(sampleArea1);
-    const area2 = addSearchAreaWithGrid(sampleArea2);
-
-    // Add sample officers
+    // Defer grid generation to avoid blocking UI
     setTimeout(() => {
-      addOfficer({ officerName: 'Officer Smith' });
-      addOfficer({ officerName: 'Officer Johnson' });
-      addOfficer({ officerName: 'Officer Williams' });
-    }, 100);
+      addSearchAreaWithGrid(sampleArea1);
+
+      // Stagger the second area to further reduce blocking
+      setTimeout(() => {
+        addSearchAreaWithGrid(sampleArea2);
+
+        // Add sample officers after areas are created
+        setTimeout(() => {
+          addOfficer({ officerName: 'Officer Smith' });
+          addOfficer({ officerName: 'Officer Johnson' });
+          addOfficer({ officerName: 'Officer Williams' });
+          setIsInitializing(false);
+        }, 50);
+      }, 50);
+    }, 50);
   };
 
   const addSearchAreaWithGrid = (areaData) => {
-    const gridData = generateGridForArea(areaData.coordinates, 10); // 10m cells
-    const area = addSearchArea({
-      ...areaData,
-      gridCells: gridData.cells,
-      totalCells: gridData.totalCells
-    });
-    return area;
+    // Generate grid in a deferred manner to avoid blocking
+    setTimeout(() => {
+      const gridData = generateGridForArea(areaData.coordinates, 10); // 10m cells
+      const area = addSearchArea({
+        ...areaData,
+        gridCells: gridData.cells,
+        totalCells: gridData.totalCells
+      });
+    }, 0);
   };
 
   const handleAreaCreated = (coordinates) => {
@@ -92,12 +104,15 @@ const AppContent = () => {
     const priority = prompt('Enter priority (high/medium/low):', 'medium');
     const timeThreshold = parseInt(prompt('Enter time threshold in minutes:', '60'));
 
-    addSearchAreaWithGrid({
-      name: areaName,
-      coordinates,
-      priority: ['high', 'medium', 'low'].includes(priority) ? priority : 'medium',
-      timeThreshold: timeThreshold || 60
-    });
+    // Use deferred grid generation
+    setTimeout(() => {
+      addSearchAreaWithGrid({
+        name: areaName,
+        coordinates,
+        priority: ['high', 'medium', 'low'].includes(priority) ? priority : 'medium',
+        timeThreshold: timeThreshold || 60
+      });
+    }, 0);
 
     setIsDrawingMode(false);
   };
@@ -163,6 +178,15 @@ const AppContent = () => {
               }`}>
                 {isRunning ? 'Simulation Active' : 'Simulation Stopped'}
               </div>
+              {isInitializing && (
+                <div className="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 flex items-center space-x-2">
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Initializing...</span>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
