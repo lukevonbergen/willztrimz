@@ -70,9 +70,9 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
             <div className="mt-2 pt-2 border-t">
               <span className="text-xs font-semibold text-blue-600">Drawing Mode Active</span>
               <div className="text-xs text-gray-500 mt-1 space-y-1">
-                <p>• Click toolbar (top-left) to select tool</p>
-                <p>• Click and drag on map to draw</p>
-                <p>• Pan and zoom still available</p>
+                <p>• Click square/polygon in toolbar (top-left)</p>
+                <p>• Click and drag to draw on map</p>
+                <p>• Map locks while drawing</p>
               </div>
             </div>
           )}
