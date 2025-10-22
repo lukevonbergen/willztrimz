@@ -22,6 +22,32 @@ body {
   z-index: 0;
 }
 
+/* Ensure Leaflet Draw controls are always clickable and visible */
+.leaflet-draw-toolbar,
+.leaflet-draw-actions,
+.leaflet-draw-tooltip {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 1000 !important;
+}
+
+.leaflet-draw-toolbar a,
+.leaflet-draw-actions a {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Make sure drawing tools work when map dragging is disabled */
+.leaflet-container.leaflet-grab {
+  cursor: crosshair;
+}
+
+/* Drawing mode cursor */
+.leaflet-draw-draw-polygon,
+.leaflet-draw-draw-rectangle {
+  cursor: crosshair !important;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

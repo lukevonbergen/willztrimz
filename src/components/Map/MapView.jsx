@@ -69,7 +69,11 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
           {isDrawingMode && (
             <div className="mt-2 pt-2 border-t">
               <span className="text-xs font-semibold text-blue-600">Drawing Mode Active</span>
-              <p className="text-xs text-gray-500 mt-1">Map dragging disabled</p>
+              <div className="text-xs text-gray-500 mt-1 space-y-1">
+                <p>• Use toolbar (top-left) to draw</p>
+                <p>• Scroll wheel to zoom</p>
+                <p>• Map panning disabled</p>
+              </div>
             </div>
           )}
           {isPlaybackMode && (

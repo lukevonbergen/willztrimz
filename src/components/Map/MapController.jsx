@@ -13,16 +13,17 @@ const MapController = ({ isDrawingMode }) => {
     if (!map) return;
 
     if (isDrawingMode) {
-      // Disable map dragging when drawing
+      // Only disable map dragging when drawing
       // This prevents the map from moving when trying to draw polygons
+      // But keeps zoom and other drawing tools functional
       map.dragging.disable();
-      map.touchZoom.disable();
-      map.doubleClickZoom.disable();
-      map.scrollWheelZoom.disable();
-      map.boxZoom.disable();
-      map.keyboard.disable();
 
-      // Keep only tap (for clicking) enabled
+      // Keep zoom enabled so users can zoom in/out while positioning for drawing
+      map.scrollWheelZoom.enable();
+      map.doubleClickZoom.enable();
+      map.touchZoom.enable();
+
+      // Keep tap enabled for touch devices
       if (map.tap) map.tap.enable();
 
       // Change cursor to crosshair to indicate drawing mode
