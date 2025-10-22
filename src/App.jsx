@@ -59,6 +59,16 @@ const AppContent = () => {
 
   // Initialize with demo data if no data exists
   useEffect(() => {
+    // Check if we need to clear old data (NY coordinates) and reinitialize with London
+    const appVersion = localStorage.getItem('appVersion');
+    if (appVersion !== '2.0-london') {
+      // Clear old data and set new version
+      localStorage.removeItem('searchTrackerState');
+      localStorage.setItem('appVersion', '2.0-london');
+      // Force page to use London coordinates on next render
+      resetAll();
+    }
+
     if (searchAreas.length === 0 && officers.length === 0) {
       initializeDemoData();
     }

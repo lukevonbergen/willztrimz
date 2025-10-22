@@ -29,9 +29,10 @@ const MapView = ({ isDrawingMode, onAreaCreated }) => {
         updateWhenIdle={true}
         updateWhenZooming={false}
       >
+        {/* CARTO Voyager - Light style with clear buildings, blue labels, grey roads */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           updateWhenIdle={true}
           updateWhenZooming={false}
           keepBuffer={2}
