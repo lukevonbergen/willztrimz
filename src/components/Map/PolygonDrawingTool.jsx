@@ -4,21 +4,30 @@ import L from 'leaflet';
 
 // Custom marker icon for drawing points
 const createPointIcon = (isFirst) => {
+  const size = isFirst ? 20 : 12;
+  const anchor = isFirst ? 10 : 6;
   return L.divIcon({
     className: 'custom-drawing-marker',
     html: `
       <div style="
-        width: 12px;
-        height: 12px;
+        width: ${size}px;
+        height: ${size}px;
         background-color: ${isFirst ? '#ef4444' : '#3b82f6'};
         border: 3px solid white;
         border-radius: 50%;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.5);
         cursor: pointer;
+        ${isFirst ? 'animation: pulse 2s infinite;' : ''}
       "></div>
+      <style>
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.2); }
+        }
+      </style>
     `,
-    iconSize: [12, 12],
-    iconAnchor: [6, 6]
+    iconSize: [size, size],
+    iconAnchor: [anchor, anchor]
   });
 };
 
@@ -40,8 +49,8 @@ const PolygonDrawingTool = ({ onComplete, onCancel }) => {
         const firstPoint = points[0];
         const distance = map.distance(firstPoint, newPoint);
 
-        // If clicked within 20 pixels of first point, complete the polygon
-        if (distance < 0.0001) { // approximately 10-20 meters depending on zoom
+        // If clicked within 50 meters of first point, complete the polygon
+        if (distance < 50) {
           setIsComplete(true);
           onComplete(points);
           return;
@@ -62,6 +71,14 @@ const PolygonDrawingTool = ({ onComplete, onCancel }) => {
       map.dragging.enable();
     };
   }, [map, points, isComplete, onComplete]);
+
+  // Handle clicking on the first marker to complete
+  const handleFirstMarkerClick = () => {
+    if (points.length >= 3 && !isComplete) {
+      setIsComplete(true);
+      onComplete(points);
+    }
+  };
 
   // Handle Escape key to cancel
   useEffect(() => {
@@ -117,6 +134,9 @@ const PolygonDrawingTool = ({ onComplete, onCancel }) => {
           key={index}
           position={point}
           icon={createPointIcon(index === 0)}
+          eventHandlers={index === 0 ? {
+            click: handleFirstMarkerClick
+          } : {}}
         />
       ))}
 
@@ -139,9 +159,12 @@ const PolygonDrawingTool = ({ onComplete, onCancel }) => {
               <p><span className="font-semibold">Additional points</span> - Click to add</p>
             </div>
             <div className="pt-2 border-t space-y-1">
-              <p><span className="font-semibold">To finish:</span> Click on the first point (red)</p>
+              <p className="text-red-600 font-bold">
+                <span className="inline-block w-4 h-4 bg-red-500 rounded-full mr-1 align-middle animate-pulse"></span>
+                Click the RED dot to complete!
+              </p>
               <p><span className="font-semibold">Minimum:</span> 3 points required</p>
-              <p><span className="font-semibold">To cancel:</span> Press <kbd className="px-1 bg-gray-100 border rounded">Esc</kbd></p>
+              <p><span className="font-semibold">Cancel:</span> Press <kbd className="px-1 bg-gray-100 border rounded">Esc</kbd></p>
             </div>
             {points.length > 0 && (
               <div className="pt-2 border-t bg-blue-50 -mx-4 -mb-4 px-4 py-2 mt-2 rounded-b-lg">
