@@ -7,6 +7,7 @@ import PlaybackControls from './components/Timeline/PlaybackControls';
 import TimelineSlider from './components/Timeline/TimelineSlider';
 import DeviceManager from './components/Management/DeviceManager';
 import AreaList from './components/Management/AreaList';
+import ConfirmModal from './components/ConfirmModal';
 import { useSimulation } from './hooks/useSimulation';
 import { generateGridForArea } from './utils/geoUtils';
 
@@ -29,6 +30,7 @@ const AppContent = () => {
   const [activeTab, setActiveTab] = useState('dashboard'); // dashboard, areas, devices
   const [isInitializing, setIsInitializing] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const { isRunning } = useSimulation();
 
@@ -181,10 +183,14 @@ const AppContent = () => {
     input.click();
   };
 
-  const handleReset = async () => {
-    if (!window.confirm('Are you sure? This will delete all data.')) {
-      return;
-    }
+  const handleResetClick = () => {
+    // Show modal instead of blocking window.confirm
+    setShowResetConfirm(true);
+  };
+
+  const handleResetConfirm = () => {
+    // Close modal first
+    setShowResetConfirm(false);
 
     // Set loading state immediately for UI feedback
     setIsResetting(true);
@@ -198,6 +204,10 @@ const AppContent = () => {
         setIsResetting(false);
       }, 100);
     }, 0);
+  };
+
+  const handleResetCancel = () => {
+    setShowResetConfirm(false);
   };
 
   return (
@@ -275,7 +285,7 @@ const AppContent = () => {
                   Import
                 </button>
                 <button
-                  onClick={handleReset}
+                  onClick={handleResetClick}
                   disabled={isResetting}
                   className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
                   title="Reset All"
@@ -367,6 +377,18 @@ const AppContent = () => {
       {/* Playback controls */}
       <PlaybackControls />
       <TimelineSlider />
+
+      {/* Reset confirmation modal */}
+      <ConfirmModal
+        isOpen={showResetConfirm}
+        title="Reset Application"
+        message="Are you sure you want to reset? This will delete all search areas, officers, and data. This action cannot be undone."
+        confirmText="Reset All Data"
+        cancelText="Cancel"
+        isDangerous={true}
+        onConfirm={handleResetConfirm}
+        onCancel={handleResetCancel}
+      />
     </div>
   );
 };
