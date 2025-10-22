@@ -192,7 +192,7 @@ npm run preview
 **SearchContext**: Central state management
 - Manages search areas, officers, alerts
 - Provides actions for creating, updating, deleting entities
-- Handles localStorage persistence
+- Optimized localStorage persistence (grid cells regenerated on load to save space)
 
 **useSimulation Hook**: Simulation engine
 - Controls officer movement simulation
@@ -214,10 +214,16 @@ npm run preview
 ## Configuration
 
 ### Cell Size
-Default grid cell size is 10m x 10m. To change:
+Default grid cell size is **20m x 20m** (optimized to prevent localStorage quota errors). To change:
 ```javascript
-// In App.jsx, line ~65
-const gridData = generateGridForArea(areaData.coordinates, 15); // Change to 15m
+// In App.jsx, addSearchAreaWithGrid function
+const gridData = generateGridForArea(areaData.coordinates, 25); // Change to 25m
+
+// Note: Smaller cells (e.g., 10m) provide more detail but:
+// - Generate 4x more cells (slower performance)
+// - Use more memory
+// - May exceed localStorage quota for large areas
+// Recommended range: 15m - 30m
 ```
 
 ### Simulation Speed

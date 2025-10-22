@@ -31,6 +31,22 @@ const AppContent = () => {
 
   const { isRunning } = useSimulation();
 
+  // Regenerate grids for areas loaded from localStorage
+  useEffect(() => {
+    searchAreas.forEach(area => {
+      if (area.coordinates && (!area.gridCells || area.gridCells.length === 0)) {
+        console.log('Regenerating grid for area:', area.name);
+        setTimeout(() => {
+          const gridData = generateGridForArea(area.coordinates, 20); // 20m cells
+          updateSearchArea(area.id, {
+            gridCells: gridData.cells,
+            totalCells: gridData.totalCells
+          });
+        }, 0);
+      }
+    });
+  }, [searchAreas.length]); // Only run when number of areas changes
+
   // Initialize with demo data if no data exists
   useEffect(() => {
     if (searchAreas.length === 0 && officers.length === 0) {
@@ -88,7 +104,8 @@ const AppContent = () => {
   const addSearchAreaWithGrid = (areaData) => {
     // Generate grid in a deferred manner to avoid blocking
     setTimeout(() => {
-      const gridData = generateGridForArea(areaData.coordinates, 10); // 10m cells
+      const gridData = generateGridForArea(areaData.coordinates, 20); // 20m cells (reduced from 10m to limit cell count)
+      console.log(`Generated ${gridData.totalCells} cells for search area`);
       const area = addSearchArea({
         ...areaData,
         gridCells: gridData.cells,

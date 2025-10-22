@@ -54,16 +54,33 @@ export const SearchProvider = ({ children }) => {
 
   // Save state to localStorage on changes
   useEffect(() => {
-    const stateToSave = {
-      searchAreas,
-      officers: officers.map(o => ({
-        ...o,
-        // Don't save real-time simulation intervals
-        simulationInterval: null
-      })),
-      alerts
-    };
-    localStorage.setItem('searchTrackerState', JSON.stringify(stateToSave));
+    try {
+      const stateToSave = {
+        searchAreas: searchAreas.map(area => ({
+          ...area,
+          // Don't save grid cells - they're too large and will be regenerated
+          gridCells: undefined,
+          // Don't save coverage data - will be recalculated
+          coverageData: undefined
+        })),
+        officers: officers.map(o => ({
+          ...o,
+          // Don't save real-time simulation intervals
+          simulationInterval: null,
+          // Limit path history to last 1000 points to save space
+          path: o.path.slice(-1000)
+        })),
+        alerts: alerts.slice(0, 20) // Only save last 20 alerts
+      };
+      localStorage.setItem('searchTrackerState', JSON.stringify(stateToSave));
+    } catch (e) {
+      console.error('Error saving state to localStorage:', e);
+      // If storage is full, clear old data and try again
+      if (e.name === 'QuotaExceededError') {
+        console.warn('localStorage quota exceeded, clearing old data');
+        localStorage.removeItem('searchTrackerState');
+      }
+    }
   }, [searchAreas, officers, alerts]);
 
   // Add a new search area
